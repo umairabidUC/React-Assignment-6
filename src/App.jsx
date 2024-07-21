@@ -1,10 +1,18 @@
 import { useState } from 'react'
 import './App.css'
+import { Provider } from 'react-redux';
+import { store } from './app/store';
+import Table from './components/Table'
+import NavBar from './components/NavBar'
 
 function App() {
 
   return (
-      <h1 className='text-3xl font-bold underline'>Tailwind Test</h1>
+    
+  <Provider store={store}>
+        <NavBar />
+        <Table />
+    </Provider>
   )
 }
 
