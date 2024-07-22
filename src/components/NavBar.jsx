@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleMode, setSelectedRows, updateStatus } from '../features/topicSlice';
 import axiosInstance from '../api/axiosInstance';
 import Modal from './Modal';
+import { useAddRowsMutation } from '../features/api/apiSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.topics.mode);
   const selectedRows = useSelector((state) => state.topics.selectedRows);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
 
   const handleModeToggle = () => {
     dispatch(toggleMode());

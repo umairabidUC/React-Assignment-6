@@ -1,42 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import Row from './Row';
+import { useAddRowsMutation, useGetRowsQuery } from '../features/api/apiSlice';
 
 const Table = () => {
-  const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {data:fetchedRows, status:fetchStatus, isLoading,isSuccess,isError} = useGetRowsQuery()
+  const [addRows,statues] = useAddRowsMutation();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/topics');
-        setRows(response.data);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const handleAdd = () => {
+  
+    addRows({Id:"2",Topic:"Arrays",Duration: 444, Link:"https://google.com",Status:true})
+  }
 
   const handleEdit = (updatedRow) => {
-    setRows(rows.map(row => (row.id === updatedRow.id ? updatedRow : row)));
+    setRows(fetchedRows.map(row => (row.id === updatedRow.id ? updatedRow : row)));
     // Add API call to save the updated row here if needed
   };
 
   const handleDelete = (id) => {
-    setRows(rows.filter(row => row.id !== id));
+    setRows(fetchedRows.filter(row => row.id !== id));
     // Add API call to delete the row here if needed
   };
 
-  if (loading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
+  if (isError) {
     return <div>Error: {error}</div>;
   }
 
@@ -55,7 +44,7 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {rows.map(row => (
+          {fetchedRows.map(row => (
             <Row
               key={row.id}
               id={row.id}
