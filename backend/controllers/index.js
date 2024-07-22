@@ -28,12 +28,14 @@ const addTopic = async (req, res) => {
 
 // Update a topic
 const updateTopic = async (req, res) => {
+  console.log("Recived Body: ", req.body)
   const { Id, Topic, Duration, Link } = req.body;
   try {
     const result = await pool.query(
       'UPDATE topics SET topic = $1, duration = $2, link = $3 WHERE id = $4 RETURNING *',
       [Topic, Duration, Link, Id]
     );
+    console.log(result.rows[0])
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error updating topic:', err);

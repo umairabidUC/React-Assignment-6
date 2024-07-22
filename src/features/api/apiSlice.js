@@ -15,9 +15,17 @@ export const rowApiSlice = createApi({
         addRows: builder.mutation({
             query: (row) => ({url:'/topics', method:'POST',body: row}),
             invalidatesTags:['Fetched Rows']
+        }),
+        editRow: builder.mutation({
+            query: (row) => ({url:"/topics", method:"PUT", body: row}),
+            invalidatesTags: ["Fetched Rows"]
+        }),
+        deleteRow: builder.mutation({
+            query: (id) => ({url:`/topics/${id}`, method: "DELETE", body: id}),
+            invalidatesTags: ["Fetched Rows"]
         })
     })
 })
 
 
-export const {useGetRowsQuery, useAddRowsMutation} = rowApiSlice
+export const {useGetRowsQuery, useAddRowsMutation, useEditRowMutation, useDeleteRowMutation} = rowApiSlice
