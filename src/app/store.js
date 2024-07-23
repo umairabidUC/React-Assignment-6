@@ -7,7 +7,6 @@ import rowsReducer from '../features/rowsSlice'
 import { rowApiSlice } from '../features/api/apiSlice';
 export const store = configureStore({
   reducer: {
-    status: statusReducer,
     topics: topicsReducer,
     view: viewReducer,
     rows: rowsReducer,
@@ -16,4 +15,3 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(rowApiSlice.middleware),
 });
-  

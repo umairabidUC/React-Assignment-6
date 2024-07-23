@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { useAddRowsMutation } from "../features/api/apiSlice";
-import {useForm} from "react-hook-form"
+import { useForm } from "react-hook-form"
 
 
 
@@ -13,34 +13,10 @@ const Modal = ({ isOpen, onClose }) => {
   const [addRows, statues] = useAddRowsMutation();
 
 
-  const handleSubmitF = async (e) => {
-    e.preventDefault();
-    if (topic.length < 5 || !link.match(/^https?:\/\/[^\s$.?#].[^\s]*$/)) {
-      alert('Invalid input. Ensure topic is at least 5 characters and link is a valid URL.');
-      return;
-    }
-
-    try {
-      const newTopic = {
-        Topic: topic,
-        Duration: parseInt(duration, 10),
-        Link: link,
-        Id: nanoid(),
-        Status: true,
-      };
-      
-      const response = await axiosInstance.post('/topics', newTopic);
-      dispatch(addTopic(response.data));
-      onClose(); // Close modal after adding
-    } catch (error) {
-      console.error('Error adding topic:', error);
-    }
-  };
   const onSubmit = (data) => {
-    setTimeout(()=> {
-      addRows({...data, Status: true, Id: nanoid()})
-    }, 2000)
+    addRows({ ...data, Status: true, Id: nanoid() })
     reset()
+    onClose()
   }
 
   return isOpen ? (
@@ -55,7 +31,7 @@ const Modal = ({ isOpen, onClose }) => {
                 required: true,
                 minLength: {
                   value: 5,
-                  message:"Please make sure the length of the topic is Greater than 5."
+                  message: "Please make sure the length of the topic is Greater than 5."
                 }
 
               })}
@@ -69,7 +45,7 @@ const Modal = ({ isOpen, onClose }) => {
             <label htmlFor="duration" className="block text-sm font-medium text-white">Duration</label>
             <input
               {...register("Duration", {
-                required:true,
+                required: true,
                 min: 0
               })}
               type="number"
@@ -80,11 +56,11 @@ const Modal = ({ isOpen, onClose }) => {
           <div className="mb-4">
             <label htmlFor="link" className="block text-sm font-medium text-white">Link To Resource</label>
             <input
-              {...register("Link",{
-                required:true,
+              {...register("Link", {
+                required: true,
               })}
               type="url"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
             />
           </div>
           <div className="flex justify-end space-x-4">
@@ -99,7 +75,7 @@ const Modal = ({ isOpen, onClose }) => {
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded-md"
             >
-              {statues.isLoading ? (<img src='../../public/loading-white.gif'/>) : "Add Topic" }
+              {statues.isLoading ? (<img src='../../public/loading-white.gif' />) : "Add Topic"}
             </button>
           </div>
         </form>

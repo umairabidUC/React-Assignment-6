@@ -1,44 +1,55 @@
 // src/components/Navbar.js
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleMode, setSelectedRows, updateStatus } from '../features/topicSlice';
-import axiosInstance from '../api/axiosInstance';
+import { toggleView, toggleStatus, clearSelectedRows } from '../features/viewSlice';
 import Modal from './Modal';
-import { useAddRowsMutation } from '../features/api/apiSlice';
+import { useChangeStatusMutation } from '../features/api/apiSlice';
+
+
+
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const mode = useSelector((state) => state.topics.mode);
-  const selectedRows = useSelector((state) => state.topics.selectedRows);
+  const viewGlobal = useSelector((state) => state.view.mode);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-
+  const [isChecked, setIsChecked] = useState(false)
+  let selectedRows = useSelector((state) => state.view.selectedRows);
   const handleModeToggle = () => {
     dispatch(toggleMode());
   };
 
-  const handleHide = async () => {
-    console.log('Hide button clicked');
-    const hidePromises = selectedRows.map(async (row) => {
-      try {
-        await axiosInstance.patch('/topics/status', { id: row.id, status: false });
-        dispatch(updateStatus({ id: row.id, status: false }));
-      } catch (error) {
-        console.error('Error updating status:', error);
-      }
-    });
-
-    await Promise.all(hidePromises);
-    dispatch(setSelectedRows([])); // Clear selected rows after hiding
+  const [changeStatus] = useChangeStatusMutation()
+  const handleHide = () => {
+    selectedRows.map((row) => {
+      toggleStatus(row?.Id)
+      changeStatus({ id: row.Id, status: !row.Status })
+    })
+    // Clear selected rows after hiding
+    dispatch(clearSelectedRows())
   };
+
+  const handleShow = () => {
+    selectedRows.map((row) => {
+      toggleStatus(row?.Id)
+      changeStatus({ id: row.Id, status: !row.Status })
+    })
+    dispatch(clearSelectedRows())
+
+  }
+
+  const handleViewChange = (e) => {
+    setIsChecked(!isChecked)
+    dispatch(toggleView())
+  }
 
   return (
     <nav className="bg-gray-800 text-white p-4 flex items-center justify-between">
       <div className="text-lg">Welcome</div>
       <div className="flex items-center">
-        <label className="switch">
-          <input type="checkbox" checked={mode === 'show'} onChange={handleModeToggle} />
-          <span className="slider"></span>
+        <label htmlFor="Toggle3" className="inline-flex items-center p-2 rounded-md cursor-pointer dark:text-gray-100">
+          <input id="Toggle3" type="checkbox" className="hidden peer" value={isChecked} onChange={handleViewChange} />
+          <span className="px-4 py-2 rounded-l-md dark:bg-violet-600 peer-checked:dark:bg-gray-700">Show</span>
+          <span className="px-4 py-2 rounded-r-md dark:bg-gray-700 peer-checked:dark:bg-violet-600">Hide</span>
         </label>
         <button
           className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
@@ -46,18 +57,23 @@ const Navbar = () => {
         >
           Add Topic
         </button>
-        <button
-          className={`ml-4 px-4 py-2 bg-blue-500 text-white rounded ${mode === 'hide' ? '' : 'hidden'}`}
-          onClick={handleHide}
-        >
-          Hide
-        </button>
-        <button
-          className={`ml-4 px-4 py-2 bg-green-500 text-white rounded ${mode === 'show' ? '' : 'hidden'}`}
-          onClick={handleModeToggle}
-        >
-          Show
-        </button>
+        {
+          viewGlobal == "show" ?
+
+            <button
+              className={`ml-4 px-4 py-2 bg-blue-500 text-white rounded`}
+              onClick={handleHide}
+            >
+              Hide
+            </button>
+            :
+            <button
+              className={`ml-4 px-4 py-2 bg-green-500 text-white rounded`}
+              onClick={handleShow}
+            >
+              Show
+            </button>
+        }
       </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </nav>

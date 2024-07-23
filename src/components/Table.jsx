@@ -1,30 +1,16 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Row from './Row';
-import {useGetRowsQuery} from '../features/api/apiSlice';
+import { useGetRowsQuery, useDeleteRowMutation } from '../features/api/apiSlice';
 import DeleteConfirmation from './DeleteConfirmation';
-import { useDeleteRowMutation } from '../features/api/apiSlice';
+import { useSelector } from 'react-redux';
 
 const Table = () => {
-  const {data:fetchedRows, status:fetchStatus, isLoading,isSuccess,isError} = useGetRowsQuery()
+  const { data: fetchedRows, isLoading } = useGetRowsQuery()
 
-  const handleEdit = (updatedRow) => {
-    setRows(fetchedRows.map(row => (row.id === updatedRow.id ? updatedRow : row)));
-    // Add API call to save the updated row here if needed
-  };
 
-  const handleDelete = (id) => {
-    setRows(fetchedRows.filter(row => row.id !== id));
-    // Add API call to delete the row here if needed
-  };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
-  if (isError) {
-    return <div>Error: {error}</div>;
-  }
-
+  const viewGlobal = useSelector(state => state.view.mode) == "show" ? true : false
   const [delRow] = useDeleteRowMutation()
   const [deleteId, setDeleteId] = useState(null);
 
@@ -54,17 +40,20 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {fetchedRows.map(row => (
-            <Row
-              key={row.id}
-              id={row.id}
-              topic={row.topic}
-              duration={row.duration}
-              link={row.link}
-              status={row.status}
-              onDeleteClick={handleDeleteClick}
-            />
-          ))}
+          {fetchedRows?.map(row => {
+            if (viewGlobal == row.status) {
+              return <Row
+                key={row.id}
+                id={row.id}
+                topic={row.topic}
+                duration={row.duration}
+                link={row.link}
+                status={row.status}
+                onDeleteClick={handleDeleteClick}
+              />
+            }
+          }
+          )}
         </tbody>
       </table>
       {deleteId && (

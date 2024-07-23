@@ -46,6 +46,7 @@ const updateTopic = async (req, res) => {
 // Update the status of a topic
 const updateStatus = async (req, res) => {
   const { id, status } = req.body;
+  console.log(req.body)
   try {
     const result = await pool.query(
       'UPDATE topics SET status = $1 WHERE id = $2 RETURNING *',

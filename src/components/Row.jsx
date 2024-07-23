@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useEditRowMutation, useDeleteRowMutation } from '../features/api/apiSlice';
+import { useEditRowMutation } from '../features/api/apiSlice';
 import { useForm } from 'react-hook-form';
-import DeleteConfirmation from './DeleteConfirmation';
+import { selectRow, unSelectRow } from '../features/viewSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const formatDuration = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -9,16 +10,15 @@ const formatDuration = (minutes) => {
   return `${hours.toString().padStart(2, '0')} Hours ${mins.toString().padStart(2, '0')} Minutes`;
 };
 
-const Row = ({ id, topic, duration, link, status,onDeleteClick }) => {
+const Row = ({ id, topic, duration, link, status, onDeleteClick }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     defaultValues: { topic, duration, link }
   });
 
-  const [editRow, { isLoading, isError, isSuccess }] = useEditRowMutation();
-  const [deleteRow] = useDeleteRowMutation();
+  const [editRow] = useEditRowMutation();
+  const viewGlobal = useSelector((state) => state.view.mode)
 
   useEffect(() => {
     setValue("topic", topic);
@@ -29,38 +29,34 @@ const Row = ({ id, topic, duration, link, status,onDeleteClick }) => {
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
-
-  const handleSaveEdit = (data) => {
+  const returnProperObject = (data) => {
     const Topic = data.topic;
     const Duration = Number(data.duration);
     const Link = data.link;
     const Status = status;
     const Id = id;
-    console.log({ Id, Topic, Duration, Link, Status });
-    editRow({ Id, Topic, Duration, Link, Status });
+    return { Id, Topic, Duration, Link, Status }
+  }
+  const handleSaveEdit = (data) => {
+    editRow(returnProperObject(data));
     setIsEditing(false);
   };
 
+  const dispatch = useDispatch();
+
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
+
+    if (viewGlobal === (status ? "show" : "hide")) {
+      if (!isChecked) {
+        dispatch(selectRow(returnProperObject({ id, topic, duration, link, status })))
+      }
+      if (isChecked) {
+        dispatch(unSelectRow({ id }))
+      }
+    }
+    setIsChecked(!isChecked)
   };
 
-  const handleDelete = (id) => {
-    deleteRow(id);
-  };
-
-  const handleDeleteClick = () => {
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteCancel = () => {
-    setShowDeleteModal(false);
-  };
-
-  const handleDeleteConfirm = (id) => {
-    handleDelete(id);
-    setShowDeleteModal(false);
-  };
 
   return (
     <>
