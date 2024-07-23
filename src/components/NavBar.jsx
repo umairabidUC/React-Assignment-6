@@ -14,9 +14,7 @@ const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChecked, setIsChecked] = useState(false)
   let selectedRows = useSelector((state) => state.view.selectedRows);
-  const handleModeToggle = () => {
-    dispatch(toggleMode());
-  };
+
 
   const [changeStatus] = useChangeStatusMutation()
   const handleHide = () => {
@@ -24,7 +22,6 @@ const Navbar = () => {
       toggleStatus(row?.Id)
       changeStatus({ id: row.Id, status: !row.Status })
     })
-    // Clear selected rows after hiding
     dispatch(clearSelectedRows())
   };
 
@@ -40,6 +37,7 @@ const Navbar = () => {
   const handleViewChange = (e) => {
     setIsChecked(!isChecked)
     dispatch(toggleView())
+    dispatch(clearSelectedRows())
   }
 
   return (

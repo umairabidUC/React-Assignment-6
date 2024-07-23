@@ -6,6 +6,9 @@ export const viewSlice = createSlice({
     initialState: {
         mode: "show",
         selectedRows: [],
+        visibleRows: 0,
+        hiddenRows: 0,
+        masterChecked: false
     },
     reducers: {
         toggleView: (state) => {
@@ -27,9 +30,15 @@ export const viewSlice = createSlice({
         },
         clearSelectedRows: (state) => {
             state.selectedRows = []
+        },
+        updateVisibleRows: (state, action) => {
+            state.visibleRows = action.payload
+        },
+        updateHiddenRows: (state, action) => {
+            state.hiddenRows = action.payload
         }
     }
 })
 
-export const { toggleView, selectRow, unSelectRow, toggleStatus, clearSelectedRows } = viewSlice.actions
+export const { toggleView, selectRow, unSelectRow, toggleStatus, clearSelectedRows, updateVisibleRows, updateHiddenRows } = viewSlice.actions
 export default viewSlice.reducer

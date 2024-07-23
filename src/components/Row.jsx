@@ -10,7 +10,7 @@ const formatDuration = (minutes) => {
   return `${hours.toString().padStart(2, '0')} Hours ${mins.toString().padStart(2, '0')} Minutes`;
 };
 
-const Row = ({ id, topic, duration, link, status, onDeleteClick }) => {
+const Row = ({ id, topic, duration, link, status, onDeleteClick, masterChecked }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
@@ -25,6 +25,26 @@ const Row = ({ id, topic, duration, link, status, onDeleteClick }) => {
     setValue("duration", duration);
     setValue("link", link);
   }, [topic, duration, link, setValue]);
+
+  useEffect(() => {
+    //debugger
+    console.log(masterChecked, "master")
+    setIsChecked(masterChecked)
+  }, [masterChecked])
+
+  useEffect(() => {
+    console.log("local check state ", isChecked)
+
+    if (viewGlobal === (status ? "show" : "hide")) {
+      if (isChecked) {
+        dispatch(selectRow(returnProperObject({ id, topic, duration, link, status })))
+      } else {
+        dispatch(unSelectRow({ id }))
+      }
+
+    }
+  }, [isChecked])
+
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -46,14 +66,7 @@ const Row = ({ id, topic, duration, link, status, onDeleteClick }) => {
 
   const handleCheckboxChange = () => {
 
-    if (viewGlobal === (status ? "show" : "hide")) {
-      if (!isChecked) {
-        dispatch(selectRow(returnProperObject({ id, topic, duration, link, status })))
-      }
-      if (isChecked) {
-        dispatch(unSelectRow({ id }))
-      }
-    }
+
     setIsChecked(!isChecked)
   };
 
