@@ -66,7 +66,6 @@ const Table = () => {
   };
 
   const handleMasterCkbx = (checked) => {
-    debugger
     if(checked) dispatch(setMaster(true))
     else dispatch(setMaster(false));
   console.log("MASTER CLICKED!!")
