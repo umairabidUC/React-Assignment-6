@@ -1,5 +1,5 @@
 // src/components/Modal.js
-import React, { useState } from 'react';
+import React from 'react';
 import { nanoid } from 'nanoid';
 import { useAddRowsMutation } from "../features/api/apiSlice";
 import { useForm } from "react-hook-form"

@@ -32,7 +32,6 @@ const Row = ({ id, topic, duration, link, status, onDeleteClick }) => {
   useEffect(() => {
     console.log("BYPASS MASTER:", byPassMaster)
     console.log("MASTER CLICKED:", masterClicked)
-    debugger
     if(!byPassMaster && masterClicked){
       setIsChecked(masterChecked)
     } else dispatch(setByPassMaster(false))

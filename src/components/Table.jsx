@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateVisibleRows, updateHiddenRows, setMaster, setByPassMaster, setMasterClicked } from '../features/viewSlice';
 
 const Table = () => {
+  console.log("Subhan hello")
   const { data: fetchedRows, isLoading } = useGetRowsQuery()
   const isMasterChecked = useSelector(state => state.view.masterChecked)
   const dispatch = useDispatch()
@@ -29,7 +30,7 @@ const Table = () => {
   useEffect(()=> {
     visibleRows = visibiltyCount(true)
     hiddenRows = visibiltyCount(false)
-    debugger
+    //debugger
     if(selectedRows.filter(rows => rows.Status == true).length === visibleRows && viewGlobal && visibleRows > 0 && !masterClicked){
       dispatch(setMaster(true))
       dispatch(setByPassMaster(true))
