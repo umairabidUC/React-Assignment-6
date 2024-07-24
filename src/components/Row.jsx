@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useEditRowMutation } from '../features/api/apiSlice';
 import { useForm } from 'react-hook-form';
-import { selectRow, unSelectRow } from '../features/viewSlice';
+import { selectRow, unSelectRow, setByPassMaster, setMasterClicked } from '../features/viewSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const formatDuration = (minutes) => {
@@ -10,9 +10,12 @@ const formatDuration = (minutes) => {
   return `${hours.toString().padStart(2, '0')} Hours ${mins.toString().padStart(2, '0')} Minutes`;
 };
 
-const Row = ({ id, topic, duration, link, status, onDeleteClick, masterChecked }) => {
+const Row = ({ id, topic, duration, link, status, onDeleteClick }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const masterChecked = useSelector(state => state.view.masterChecked)
+  const masterClicked = useSelector(state => state.view.masterClicked)
+  const byPassMaster = useSelector(state => state.view.byPassMaster)
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     defaultValues: { topic, duration, link }
   });
@@ -27,13 +30,16 @@ const Row = ({ id, topic, duration, link, status, onDeleteClick, masterChecked }
   }, [topic, duration, link, setValue]);
 
   useEffect(() => {
-    //debugger
-    console.log(masterChecked, "master")
-    setIsChecked(masterChecked)
+    console.log("BYPASS MASTER:", byPassMaster)
+    console.log("MASTER CLICKED:", masterClicked)
+    debugger
+    if(!byPassMaster && masterClicked){
+      setIsChecked(masterChecked)
+    } else dispatch(setByPassMaster(false))
+    dispatch(setMasterClicked(false))
   }, [masterChecked])
 
   useEffect(() => {
-    console.log("local check state ", isChecked)
 
     if (viewGlobal === (status ? "show" : "hide")) {
       if (isChecked) {

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 
 
 export const viewSlice = createSlice({
@@ -8,7 +9,9 @@ export const viewSlice = createSlice({
         selectedRows: [],
         visibleRows: 0,
         hiddenRows: 0,
-        masterChecked: false
+        masterChecked: false,
+        byPassMaster: false,
+        masterClicked: false,
     },
     reducers: {
         toggleView: (state) => {
@@ -18,7 +21,7 @@ export const viewSlice = createSlice({
             state.selectedRows.push(action.payload)
         },
         unSelectRow: (state, action) => {
-            state.selectedRows = state.selectedRows.filter((row) => row.id == action.payload.id)
+            state.selectedRows = state.selectedRows.filter(row => row.Id != action.payload.id)
         },
         toggleStatus: (state, action) => {
             state.selectedRows.forEach((row) => {
@@ -36,9 +39,18 @@ export const viewSlice = createSlice({
         },
         updateHiddenRows: (state, action) => {
             state.hiddenRows = action.payload
+        },
+        setMaster: (state,action) => {
+            state.masterChecked = action.payload
+        },
+        setByPassMaster: (state, action)=> {
+            state.byPassMaster = action.payload
+        },
+        setMasterClicked: (state,action) => {
+            state.masterClicked = action.payload
         }
     }
 })
 
-export const { toggleView, selectRow, unSelectRow, toggleStatus, clearSelectedRows, updateVisibleRows, updateHiddenRows } = viewSlice.actions
+export const { toggleView, selectRow, unSelectRow, toggleStatus, clearSelectedRows, updateVisibleRows, updateHiddenRows, setMaster, setByPassMaster, setMasterClicked } = viewSlice.actions
 export default viewSlice.reducer
